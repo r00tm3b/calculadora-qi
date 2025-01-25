@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de QI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Calculadora de QI</h1>
+
+        <label for="maxima">Número da maior questão acertada:</label>
+        <input type="number" id="maxima" placeholder="Número da maior questão">
+
+        <label for="erradas">Questões erradas (separadas por vírgula):</label>
+        <input type="text" id="erradas" placeholder="Exemplo: 1,3,5">
+
+        <button onclick="calcularQI()">Calcular QI</button>
+
+        <div id="resultado" class="result"></div>
+    </div>
+
+    <script>
+        function calcularQI() {
+            try {
+                let questaoMaxima = parseInt(document.getElementById("maxima").value);
+                let questoesErradas = document.getElementById("erradas").value.split(',').map(Number);
+
+                const scores = [
+                    0, 93.3, 96.2, 99.0, 101.7, 104.3, 106.9, 109.4, 111.8, 114.2, 116.5,
+                    118.8, 121.0, 123.2, 125.3, 127.4, 129.5, 131.5, 133.5, 135.5, 137.5,
+                    139.5, 141.4, 143.3, 145.3, 147.2, 149.1, 151.0, 153.0, 154.9, 156.9,
+                    158.8, 160.8, 162.9, 164.9, 167.0, 169.1, 171.3, 173.5, 175.7, 178.0,
+                    180.3, 182.7, 185.2, 187.7, 190.3, 192.9, 195.6, 198.4, 201.2, 204.3,
+                    207.3, 210.4, 213.7, 217.0, 220.4, 223.9
+                ];
+
+                let ScX = scores[questaoMaxima];
+                let totalAcumulado = Math.pow(2, (ScX - 100) / 7.5);
+
+                questoesErradas.forEach(q => {
+                    let ScN = scores[q];
+                    let ScNmenos1 = q > 1 ? scores[q - 1] : 0;
+                    let impacto = 2 * ((ScN - 100) / 7.5) - 2 * ((ScNmenos1 - 100) / 7.5);
+                    totalAcumulado -= impacto;
+                });
+
+                let qi = totalAcumulado <= 0 ? 0 : 100 + 7.5 * Math.log2(totalAcumulado);
+
+                document.getElementById("resultado").innerHTML =
+                    `Quantidade de pessoas com 100 de QI para uma produção equivalente: ${totalAcumulado.toFixed(2)}<br>QI correspondente: ${qi.toFixed(2)}`;
+            } catch (e) {
+                alert("Erro: " + e.message);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
